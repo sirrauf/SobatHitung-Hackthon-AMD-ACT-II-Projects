@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+  </head>
+  <body
+    style="
+      font-family:
+        -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto,
+        sans-serif;
+      background: #f5f5f7;
+      padding: 40px 20px;
+      margin: 0;
+    "
+  >
+    <div
+      style="
+        max-width: 480px;
+        margin: 0 auto;
+        background: #fff;
+        border-radius: 12px;
+        padding: 40px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      "
+    >
+      <h2 style="margin: 0 0 8px; font-size: 22px; color: #1a1a2e">
+        Verifikasi Email Anda
+      </h2>
+      <p
+        style="color: #666; font-size: 15px; line-height: 1.6; margin: 0 0 24px"
+      >
+        Halo <strong style="color: #1a1a2e">{{ nama }}</strong>,<br />
+        Terima kasih telah mendaftar di SobatHitung! Klik tombol di bawah untuk
+        memverifikasi email Anda:
+      </p>
+      <a
+        href="{{ verify_url }}"
+        style="
+          display: inline-block;
+          padding: 12px 28px;
+          background: #4361ee;
+          color: #fff;
+          text-decoration: none;
+          border-radius: 6px;
+          font-weight: 600;
+          font-size: 14px;
+        "
+      >
+        Verifikasi Email
+      </a>
+      <p
+        style="color: #999; font-size: 13px; margin-top: 24px; line-height: 1.5"
+      >
+        Atau salin link ini ke browser Anda:<br />
+        <span style="color: #4361ee; word-break: break-all"
+          >{{ verify_url }}</span
+        >
+      </p>
+      <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0" />
+      <p style="color: #999; font-size: 12px; margin: 0">
+        &copy; 2026 SobatHitung — AMD ACT II Hackathon Project
+      </p>
+    </div>
+  </body>
+</html>

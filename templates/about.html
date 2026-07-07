@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tentang Kami — SobatHitung</title>
+    <meta
+      name="description"
+      content="SobatHitung lahir dari visi untuk memberdayakan bisnis dengan mengubah operasi keuangan yang kompleks menjadi alur kerja sederhana, cerdas, dan otomatis."
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/shared.css') }}"
+    />
+  </head>
+  <body>
+    <!-- Top Navigation -->
+    <nav class="topnav" data-od-id="topnav">
+      <div class="container">
+        <a href="{{ url_for('landing') }}" class="brand" data-od-id="brand-link"
+          >SobatHitung</a
+        >
+        <ul class="nav-links" id="navLinks">
+          <li><a href="{{ url_for('landing') }}">Beranda</a></li>
+          <li><a href="{{ url_for('about') }}" class="active">Tentang</a></li>
+          <li><a href="{{ url_for('contact') }}">Kontak</a></li>
+          <li>
+            <a
+              href="{{ url_for('login') }}"
+              class="btn btn-primary btn-sm nav-cta"
+              data-od-id="nav-login"
+              >Masuk</a
+            >
+          </li>
+        </ul>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+      </div>
+    </nav>
+
+    <main id="content">
+      <!-- Hero -->
+      <section class="section" data-od-id="hero">
+        <div class="container">
+          <div class="section-header">
+            <span class="eyebrow">Tentang Kami</span>
+            <h1>Membangun Masa Depan Keuangan Cerdas</h1>
+            <p style="max-width: 640px; font-size: 18px">
+              SobatHitung lahir dari visi untuk memberdayakan bisnis dengan
+              mengubah operasi keuangan yang kompleks menjadi alur kerja
+              sederhana, cerdas, dan otomatis.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Misi -->
+      <section class="section-sm" data-od-id="mission">
+        <div class="container">
+          <div class="grid-2">
+            <div>
+              <span class="eyebrow">Misi Kami</span>
+              <h2 style="margin-top: 8px">Demokratisasi Keuangan Cerdas</h2>
+              <p
+                class="text-muted"
+                style="margin-top: 12px; font-size: 16px; line-height: 1.7"
+              >
+                Kami percaya bahwa setiap bisnis &mdash; dari UMKM hingga
+                startup &mdash; berhak memiliki akses ke alat keuangan yang
+                canggih. SobatHitung dirancang untuk menghilangkan hambatan
+                teknis dalam pengelolaan keuangan, dari pembukuan otomatis
+                hingga analisis berbasis AI.
+              </p>
+              <p
+                class="text-muted"
+                style="margin-top: 12px; font-size: 16px; line-height: 1.7"
+              >
+                Proyek ini dikembangkan dalam rangka
+                <strong style="color: var(--fg)">AMD ACT II Hackathon</strong>
+                di track AI Agents LLM, memanfaatkan teknologi AI terkini untuk
+                membangun asisten keuangan yang benar-benar memahami kebutuhan
+                bisnis Indonesia.
+              </p>
+            </div>
+            <div class="ph-img" style="min-height: 280px">
+              <span>[Ilustrasi — AI Finance Assistant]</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Target Audiens -->
+      <section class="section" data-od-id="audience">
+        <div class="container">
+          <div class="section-header center">
+            <span class="eyebrow">Untuk Siapa</span>
+            <h2>Dibuat untuk Semua Pelaku Bisnis</h2>
+            <p>
+              SobatHitung melayani berbagai kalangan yang membutuhkan
+              pengelolaan keuangan cerdas.
+            </p>
+          </div>
+          <div class="grid-3">
+            <div class="card" data-od-id="audience-umkm">
+              <div class="card-icon">
+                <svg viewBox="0 0 24 24">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                  <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+              </div>
+              <h3>UMKM</h3>
+              <p class="text-muted" style="margin-top: 8px; font-size: 15px">
+                Kelola keuangan usaha kecil dengan mudah &mdash; tanpa perlu
+                pengetahuan akuntansi mendalam.
+              </p>
+            </div>
+            <div class="card" data-od-id="audience-startup">
+              <div class="card-icon">
+                <svg viewBox="0 0 24 24">
+                  <polygon
+                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+                  />
+                </svg>
+              </div>
+              <h3>Startup</h3>
+              <p class="text-muted" style="margin-top: 8px; font-size: 15px">
+                Pantau burn rate, cash flow, dan metrik keuangan penting untuk
+                pertumbuhan yang sehat.
+              </p>
+            </div>
+            <div class="card" data-od-id="audience-accountant">
+              <div class="card-icon">
+                <svg viewBox="0 0 24 24">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </div>
+              <h3>Akuntan &amp; Konsultan</h3>
+              <p class="text-muted" style="margin-top: 8px; font-size: 15px">
+                Otomatisasi tugas rutin dan fokus pada analisis strategis yang
+                bernilai tinggi.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Nilai -->
+      <section class="section-sm" data-od-id="values">
+        <div class="container">
+          <div class="section-header center">
+            <span class="eyebrow">Nilai Kami</span>
+            <h2>Apa yang Kami Percayai</h2>
+          </div>
+          <div class="grid-3">
+            <div class="card" data-od-id="value-accuracy">
+              <div class="card-icon">
+                <svg viewBox="0 0 24 24">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                  <polyline points="22 4 12 14.01 9 11.01" />
+                </svg>
+              </div>
+              <h3>Akurasi</h3>
+              <p class="text-muted" style="margin-top: 8px; font-size: 15px">
+                Setiap perhitungan dan laporan diverifikasi dengan presisi
+                tinggi. Kami tidak mengompromi ketepatan.
+              </p>
+            </div>
+            <div class="card" data-od-id="value-security">
+              <div class="card-icon">
+                <svg viewBox="0 0 24 24">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+              </div>
+              <h3>Keamanan Data</h3>
+              <p class="text-muted" style="margin-top: 8px; font-size: 15px">
+                Arsitektur yang mengutamakan privasi. Data keuangan Anda tetap
+                aman dan privat.
+              </p>
+            </div>
+            <div class="card" data-od-id="value-innovation">
+              <div class="card-icon">
+                <svg viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="3" />
+                  <path
+                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
+                  />
+                </svg>
+              </div>
+              <h3>Inovasi</h3>
+              <p class="text-muted" style="margin-top: 8px; font-size: 15px">
+                Memanfaatkan AI Agents dan LLM terkini untuk terus memberikan
+                solusi keuangan terdepan.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tech -->
+      <section class="section-sm cta-section" data-od-id="tech">
+        <div class="container text-center">
+          <span class="eyebrow">Teknologi</span>
+          <h2>Dibangun dengan AI Terkini</h2>
+          <p
+            style="
+              color: var(--muted);
+              max-width: 520px;
+              margin: 12px auto 0;
+              font-size: 17px;
+            "
+          >
+            SobatHitung memanfaatkan AI Agents dan Large Language Models yang
+            berjalan di infrastruktur AMD untuk performa tinggi dan efisiensi.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer" data-od-id="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-col">
+            <h4>SobatHitung</h4>
+            <p style="max-width: 260px">
+              AI Finance Assistant &mdash; mengubah operasi keuangan kompleks
+              menjadi alur kerja cerdas dan otomatis.
+            </p>
+          </div>
+          <div class="footer-col">
+            <h4>Produk</h4>
+            <ul>
+              <li><a href="{{ url_for('landing') }}">Beranda</a></li>
+              <li><a href="{{ url_for('about') }}">Tentang Kami</a></li>
+              <li><a href="{{ url_for('contact') }}">Kontak</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Akun</h4>
+            <ul>
+              <li><a href="{{ url_for('register') }}">Daftar</a></li>
+              <li><a href="{{ url_for('login') }}">Masuk</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Repo</h4>
+            <ul>
+              <li>
+                <a
+                  href="https://github.com/sirrauf/SobatHitung-Hackthon-AMD-ACT-II-Projects"
+                  target="_blank"
+                  rel="noopener"
+                  >GitHub</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          &copy; 2026 SobatHitung &mdash; AMD ACT II Hackathon Project
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      (function () {
+        var hamburger = document.getElementById("hamburger");
+        var navLinks = document.getElementById("navLinks");
+        if (hamburger && navLinks) {
+          hamburger.addEventListener("click", function () {
+            navLinks.classList.toggle("open");
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>

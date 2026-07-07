@@ -1,0 +1,7 @@
+Flask
+Flask-Mail
+pony
+bcrypt
+PyMySQL
+python-dotenv
+requests
