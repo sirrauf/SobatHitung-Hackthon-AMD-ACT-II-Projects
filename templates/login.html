@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Masuk — SobatHitung</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/shared.css') }}"
+    />
+  </head>
+  <body>
+    <nav class="topnav">
+      <div class="container">
+        <a href="{{ url_for('landing') }}" class="brand">SobatHitung</a>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="{{ url_for('landing') }}">Beranda</a></li>
+          <li><a href="{{ url_for('about') }}">Tentang</a></li>
+          <li><a href="{{ url_for('contact') }}">Kontak</a></li>
+          <li>
+            <a
+              href="{{ url_for('login') }}"
+              class="btn btn-primary btn-sm nav-cta"
+              >Masuk</a
+            >
+          </li>
+        </ul>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+      </div>
+    </nav>
+
+    <main class="auth-page" id="content">
+      <div class="auth-card">
+        <div class="text-center" style="margin-bottom: 24px">
+          <a
+            href="{{ url_for('landing') }}"
+            style="
+              font-size: 24px;
+              font-weight: 700;
+              color: var(--fg);
+              text-decoration: none;
+            "
+            >SobatHitung</a
+          >
+        </div>
+        <h2>Masuk ke Akun</h2>
+        <p class="subtitle">Selamat datang kembali! Masuk untuk melanjutkan.</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %} {% for category, message in messages %}
+        <div
+          style="padding:10px 14px;border-radius:var(--radius-sm);margin-bottom:16px;font-size:14px;
+              {% if category == 'danger' %}background:oklch(95% 0.04 20);color:var(--danger);border:1px solid oklch(88% 0.06 20);
+              {% elif category == 'success' %}background:oklch(95% 0.04 145);color:var(--success);border:1px solid oklch(88% 0.06 145);
+              {% elif category == 'warning' %}background:oklch(95% 0.04 80);color:var(--warn);border:1px solid oklch(88% 0.06 80);
+              {% else %}background:var(--accent-bg);color:var(--accent);border:1px solid var(--border);{% endif %}"
+        >
+          {{ message }}
+        </div>
+        {% endfor %} {% endif %} {% endwith %}
+
+        <form method="POST" action="{{ url_for('login') }}">
+          <div class="form-group">
+            <label class="form-label" for="lEmail">Email</label>
+            <input
+              class="form-input"
+              type="email"
+              id="lEmail"
+              name="email"
+              placeholder="email@contoh.com"
+              required
+              autocomplete="email"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="lPassword">Password</label>
+            <input
+              class="form-input"
+              type="password"
+              id="lPassword"
+              name="password"
+              placeholder="Masukkan password"
+              required
+              autocomplete="current-password"
+            />
+          </div>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 24px;
+            "
+          >
+            <label class="form-checkbox"
+              ><input type="checkbox" id="lRemember" /> Ingat saya</label
+            >
+            <a href="{{ url_for('forgot_password') }}" style="font-size: 14px"
+              >Lupa password?</a
+            >
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%">
+            Masuk
+          </button>
+        </form>
+        <div class="auth-divider">atau</div>
+        <p class="auth-link">
+          Belum punya akun?
+          <a href="{{ url_for('register') }}">Daftar gratis</a>
+        </p>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-bottom">
+          &copy; 2026 SobatHitung &mdash; AMD ACT II Hackathon Project
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      var hamburger = document.getElementById("hamburger");
+      var navLinks = document.getElementById("navLinks");
+      if (hamburger && navLinks) {
+        hamburger.addEventListener("click", function () {
+          navLinks.classList.toggle("open");
+        });
+      }
+    </script>
+  </body>
+</html>

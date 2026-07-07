@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Verifikasi Email — SobatHitung</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/shared.css') }}"
+    />
+  </head>
+  <body>
+    <nav class="topnav">
+      <div class="container">
+        <a href="{{ url_for('landing') }}" class="brand">SobatHitung</a>
+      </div>
+    </nav>
+    <main class="auth-page">
+      <div class="auth-card" style="text-align: center">
+        <h2>Verifikasi Email</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %} {% for category, message in messages %}
+        <div
+          style="padding:10px 14px;border-radius:var(--radius-sm);margin:16px 0;font-size:14px;
+              {% if category == 'danger' %}background:oklch(95% 0.04 20);color:var(--danger);border:1px solid oklch(88% 0.06 20);
+              {% elif category == 'success' %}background:oklch(95% 0.04 145);color:var(--success);border:1px solid oklch(88% 0.06 145);
+              {% else %}background:var(--accent-bg);color:var(--accent);border:1px solid var(--border);{% endif %}"
+        >
+          {{ message }}
+        </div>
+        {% endfor %} {% endif %} {% endwith %}
+        <a
+          href="{{ url_for('login') }}"
+          class="btn btn-primary"
+          style="margin-top: 16px"
+          >Masuk ke Akun</a
+        >
+      </div>
+    </main>
+  </body>
+</html>

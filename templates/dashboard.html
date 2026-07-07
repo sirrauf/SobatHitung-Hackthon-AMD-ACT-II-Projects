@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="id" data-theme="{{ 'dark' if user.dark_mode else 'light' }}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard — SobatHitung</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/shared.css') }}"
+    />
+    <style>
+      .prompt-area {
+        display: flex;
+        flex-direction: column;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        margin-bottom: 24px;
+      }
+      .prompt-area .prompt-row {
+        display: flex;
+        gap: 12px;
+        padding: 16px;
+        align-items: flex-end;
+      }
+      .prompt-area textarea {
+        flex: 1;
+        border: none;
+        background: transparent;
+        resize: none;
+        font-size: 15px;
+        min-height: 48px;
+        outline: none;
+        color: var(--fg);
+      }
+      .prompt-area textarea::placeholder {
+        color: var(--muted);
+      }
+      .prompt-area .btn {
+        flex-shrink: 0;
+      }
+      #fileInput {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="topnav">
+      <div class="container">
+        <a href="{{ url_for('landing') }}" class="brand">SobatHitung</a>
+        <ul class="nav-links" id="navLinks">
+          <li>
+            <a href="{{ url_for('dashboard') }}" class="active">Dashboard</a>
+          </li>
+          <li><a href="{{ url_for('profile') }}">Profil</a></li>
+          <li>
+            <a
+              href="{{ url_for('logout') }}"
+              class="btn btn-secondary btn-sm nav-cta"
+              >Keluar</a
+            >
+          </li>
+        </ul>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+      </div>
+    </nav>
+
+    <div class="dashboard-layout">
+      <aside class="dashboard-sidebar">
+        <ul class="sidebar-nav">
+          <li>
+            <a href="#" class="active" data-panel="prompt" id="navPrompt">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                />
+              </svg>
+              Prompt
+            </a>
+          </li>
+          <li>
+            <a href="#" data-panel="history" id="navHistory">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+              Riwayat
+            </a>
+          </li>
+          <li>
+            <a href="#" data-panel="files" id="navFiles">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                />
+                <polyline points="14 2 14 8 20 8" />
+              </svg>
+              File Saya
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for('profile') }}">
+              <svg viewBox="0 0 24 24">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+              Profil
+            </a>
+          </li>
+        </ul>
+
+        <!-- Recent chat history in sidebar -->
+        <div class="sidebar-section">
+          <h4>Chat Terbaru</h4>
+          <div id="sidebarHistory">
+            {% for chat in chat_history[:5] %}
+            <div class="sidebar-history-item" title="{{ chat.prompt[:80] }}">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                />
+              </svg>
+              {{ chat.prompt[:30] }}{% if chat.prompt|length > 30 %}...{% endif
+              %}
+            </div>
+            {% endfor %} {% if not chat_history %}
+            <div
+              style="padding: 8px 14px; font-size: 12px; color: var(--muted)"
+            >
+              Belum ada riwayat
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </aside>
+
+      <!-- ===== MAIN CONTENT ===== -->
+      <div class="dashboard-main" id="content">
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %} {% for category, message in messages %}
+        <div
+          style="padding:10px 14px;border-radius:var(--radius-sm);margin-bottom:16px;font-size:14px;
+              {% if category == 'success' %}background:oklch(95% 0.04 145);color:var(--success);border:1px solid oklch(88% 0.06 145);
+              {% else %}background:var(--accent-bg);color:var(--accent);border:1px solid var(--border);{% endif %}"
+        >
+          {{ message }}
+        </div>
+        {% endfor %} {% endif %} {% endwith %}
+
+        <!-- ===== PANEL: PROMPT (AI CHAT) ===== -->
+        <div id="panelPrompt">
+          <div class="section-header">
+            <span class="eyebrow">AI Finance Assistant</span>
+            <h2>Halo, {{ user.nama }}! 👋</h2>
+            <p>Tanyakan apa saja tentang keuangan bisnis Anda di bawah ini.</p>
+          </div>
+
+          <!-- Model selector -->
+          <div class="model-selector">
+            <label for="modelSelect">
+              <svg
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                style="
+                  display: inline;
+                  vertical-align: middle;
+                  margin-right: 4px;
+                "
+              >
+                <path
+                  d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+                />
+              </svg>
+              Model AI:
+            </label>
+            <select
+              id="modelSelect"
+              class="form-select"
+              style="min-height: 36px; padding: 6px 12px"
+            >
+              {% for key, val in models.items() %}
+              <option value="{{ key }}" title="{{ val.desc }}">
+                {{ val.name }} — {{ val.desc }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Chat container -->
+          <div class="chat-container" id="chatContainer">
+            <!-- Existing chat history -->
+            {% for chat in chat_history %}
+            <div class="chat-msg user-msg">
+              <div class="chat-avatar">{{ user.nama[:2]|upper }}</div>
+              <div class="chat-bubble">
+                {{ chat.prompt }}
+                <span class="timestamp"
+                  >{{ chat.created_at.strftime('%H:%M') }}</span
+                >
+              </div>
+            </div>
+            <div class="chat-msg ai-msg">
+              <div class="chat-avatar">AI</div>
+              <div class="chat-bubble">
+                <span class="model-tag">{{ chat.model_name }}</span>
+                {{ chat.response }}
+                <span class="timestamp"
+                  >{{ chat.created_at.strftime('%H:%M') }}</span
+                >
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+
+          <!-- Empty state -->
+          {% if not chat_history %}
+          <div class="empty-state" id="emptyState">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5">
+              <path
+                d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+              />
+            </svg>
+            <p>
+              Belum ada percakapan. Mulai dengan mengetik pertanyaan di atas!
+            </p>
+          </div>
+          {% endif %}
+
+          <!-- Prompt input area -->
+          <div class="prompt-area">
+            <!-- Attached files display -->
+            <div
+              class="attached-files"
+              id="attachedFiles"
+              style="display: none"
+            ></div>
+            <div class="prompt-row">
+              <textarea
+                id="promptInput"
+                placeholder="Tanyakan tentang keuangan bisnis Anda..."
+                rows="2"
+              ></textarea>
+              <button class="btn btn-primary" id="sendBtn">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  style="display: inline; vertical-align: middle"
+                >
+                  <line x1="22" y1="2" x2="11" y2="13" />
+                  <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                </svg>
+                Kirim
+              </button>
+            </div>
+            <div class="prompt-toolbar">
+              <button class="attach-btn" id="attachBtn" type="button">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"
+                  />
+                </svg>
+                Lampirkan File (PDF/Excel)
+              </button>
+              <input
+                type="file"
+                id="fileInput"
+                accept=".pdf,.xlsx,.xls"
+                multiple
+              />
+              <span
+                style="font-size: 11px; color: var(--muted); margin-left: auto"
+                >Maks. 16MB per file</span
+              >
+            </div>
+          </div>
+
+          <!-- Feature cards -->
+          <div class="feature-cards-grid">
+            <div class="feature-card">
+              <div class="fc-icon">🤖</div>
+              <h4>AI Finance Assistant</h4>
+              <p>
+                Asisten percakapan AI yang memahami konteks bisnis Anda. Tanya
+                tentang data keuangan, akuntansi, atau minta rekomendasi
+                strategis.
+              </p>
+            </div>
+            <div class="feature-card">
+              <div class="fc-icon">📊</div>
+              <h4>Pembukuan Otomatis</h4>
+              <p>
+                AI mencatat dan mengkategorikan transaksi secara otomatis.
+                Upload invoice, dan sistem memprosesnya tanpa input manual.
+              </p>
+            </div>
+            <div class="feature-card">
+              <div class="fc-icon">💰</div>
+              <h4>Laporan Instan</h4>
+              <p>
+                Generate laporan laba rugi, neraca, dan arus kas dalam satu
+                klik.
+              </p>
+            </div>
+            <div class="feature-card">
+              <div class="fc-icon">📈</div>
+              <h4>Analitik Bisnis</h4>
+              <p>
+                Rekomendasi berbasis AI untuk meningkatkan profitabilitas dan
+                efisiensi.
+              </p>
+            </div>
+            <div class="feature-card">
+              <div class="fc-icon">🧾</div>
+              <h4>Pajak Cerdas</h4>
+              <p>
+                Perhitungan pajak otomatis dan monitoring kepatuhan perpajakan.
+              </p>
+            </div>
+            <div class="feature-card">
+              <div class="fc-icon">📅</div>
+              <h4>Peramalan Arus Kas</h4>
+              <p>
+                Prediksi tren arus kas masa depan dengan AI untuk keputusan yang
+                lebih baik.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== PANEL: HISTORY ===== -->
+        <div id="panelHistory" style="display: none">
+          <div class="section-header">
+            <span class="eyebrow">Riwayat Aktivitas</span>
+            <h2>Aktivitas Anda 📋</h2>
+            <p>Semua aktivitas yang tercatat di akun Anda.</p>
+          </div>
+          <div id="activityList">
+            <div class="empty-state">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+              <p>Memuat riwayat...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== PANEL: FILES ===== -->
+        <div id="panelFiles" style="display: none">
+          <div class="section-header">
+            <span class="eyebrow">File Manager</span>
+            <h2>File Saya 📂</h2>
+            <p>Kelola file PDF dan Excel yang telah Anda upload.</p>
+          </div>
+          <div style="margin-bottom: 20px">
+            <button class="btn btn-primary" id="uploadFileBtn">
+              <svg
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                style="display: inline; vertical-align: middle"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
+              Upload File
+            </button>
+            <input
+              type="file"
+              id="fileInputPanel"
+              accept=".pdf,.xlsx,.xls"
+              style="display: none"
+            />
+          </div>
+          <div id="fileList">
+            <div class="empty-state">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5">
+                <path
+                  d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                />
+                <polyline points="14 2 14 8 20 8" />
+              </svg>
+              <p>Memuat file...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function() {
+        'use strict';
+
+        // ===================== HAMBURGER =====================
+        var hamburger = document.getElementById('hamburger');
+        var navLinks = document.getElementById('navLinks');
+        if (hamburger && navLinks) {
+          hamburger.addEventListener('click', function() {
+            navLinks.classList.toggle('open');
+          });
+        }
+
+        // ===================== DARK MODE INIT =====================
+        var isDark = {{ 'true' if user.dark_mode else 'false' }};
+        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+
+        // ===================== PANEL NAVIGATION =====================
+        var panels = ['prompt', 'history', 'files'];
+        var sidebarLinks = document.querySelectorAll('.sidebar-nav a[data-panel]');
+
+        function showPanel(name) {
+          panels.forEach(function(p) {
+            var el = document.getElementById('panel' + p.charAt(0).toUpperCase() + p.slice(1));
+            if (el) el.style.display = (p === name) ? 'block' : 'none';
+          });
+          sidebarLinks.forEach(function(a) {
+            a.classList.toggle('active', a.getAttribute('data-panel') === name);
+          });
+          // Load data on panel switch
+          if (name === 'history') loadActivities();
+          if (name === 'files') loadFiles();
+        }
+
+        sidebarLinks.forEach(function(a) {
+          a.addEventListener('click', function(e) {
+            e.preventDefault();
+            showPanel(this.getAttribute('data-panel'));
+          });
+        });
+
+        // ===================== AI CHAT =====================
+        var chatContainer = document.getElementById('chatContainer');
+        var promptInput = document.getElementById('promptInput');
+        var sendBtn = document.getElementById('sendBtn');
+        var emptyState = document.getElementById('emptyState');
+        var modelSelect = document.getElementById('modelSelect');
+        var userInitials = '{{ user.nama[:2]|upper }}';
+
+        function scrollChat() {
+          chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function addUserMsg(text) {
+          if (emptyState) emptyState.style.display = 'none';
+          var now = new Date();
+          var time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+          var div = document.createElement('div');
+          div.className = 'chat-msg user-msg';
+          div.innerHTML = '<div class="chat-avatar">' + userInitials + '</div>' +
+            '<div class="chat-bubble">' + escapeHtml(text) + '<span class="timestamp">' + time + '</span></div>';
+          chatContainer.appendChild(div);
+          scrollChat();
+        }
+
+        function addAiMsg(text, model, timestamp) {
+          var div = document.createElement('div');
+          div.className = 'chat-msg ai-msg';
+          div.innerHTML = '<div class="chat-avatar">AI</div>' +
+            '<div class="chat-bubble"><span class="model-tag">' + escapeHtml(model) + '</span>' +
+            formatAiResponse(text) +
+            '<span class="timestamp">' + escapeHtml(timestamp) + '</span></div>';
+          chatContainer.appendChild(div);
+          scrollChat();
+        }
+
+        function addTypingIndicator() {
+          var div = document.createElement('div');
+          div.className = 'chat-msg ai-msg';
+          div.id = 'typingMsg';
+          div.innerHTML = '<div class="chat-avatar">AI</div>' +
+            '<div class="chat-bubble"><div class="typing-indicator"><span></span><span></span><span></span></div></div>';
+          chatContainer.appendChild(div);
+          scrollChat();
+        }
+
+        function removeTypingIndicator() {
+          var el = document.getElementById('typingMsg');
+          if (el) el.remove();
+        }
+
+        function escapeHtml(text) {
+          var d = document.createElement('div');
+          d.textContent = text;
+          return d.innerHTML;
+        }
+
+        function formatAiResponse(text) {
+          // Simple markdown-like formatting
+          var safe = escapeHtml(text);
+          safe = safe.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+          safe = safe.replace(/\n/g, '<br>');
+          safe = safe.replace(/- /g, '• ');
+          return safe;
+        }
+
+        function sendMessage() {
+          var text = promptInput.value.trim();
+          if (!text) return;
+
+          promptInput.value = '';
+          promptInput.style.height = 'auto';
+          addUserMsg(text);
+          addTypingIndicator();
+          sendBtn.disabled = true;
+
+          fetch('{{ url_for("api_chat") }}', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              prompt: text,
+              model: modelSelect.value
+            })
+          })
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            removeTypingIndicator();
+            if (data.error) {
+              addAiMsg('❌ ' + data.error, 'Error', new Date().toLocaleTimeString());
+            } else {
+              addAiMsg(data.response, data.model, data.timestamp);
+            }
+            sendBtn.disabled = false;
+          })
+          .catch(function(err) {
+            removeTypingIndicator();
+            addAiMsg('❌ Gagal menghubungi server: ' + err.message, 'Error', new Date().toLocaleTimeString());
+            sendBtn.disabled = false;
+          });
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        promptInput.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+          }
+        });
+
+        // Auto-resize textarea
+        promptInput.addEventListener('input', function() {
+          this.style.height = 'auto';
+          this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+        });
+
+        // ===================== FILE ATTACHMENT (PROMPT) =====================
+        var attachBtn = document.getElementById('attachBtn');
+        var fileInput = document.getElementById('fileInput');
+        var attachedFilesDiv = document.getElementById('attachedFiles');
+        var pendingFiles = [];
+
+        attachBtn.addEventListener('click', function() { fileInput.click(); });
+
+        fileInput.addEventListener('change', function() {
+          for (var i = 0; i < this.files.length; i++) {
+            var file = this.files[i];
+            var ext = file.name.split('.').pop().toLowerCase();
+            if (['pdf', 'xlsx', 'xls'].indexOf(ext) === -1) {
+              alert('Format file "' + file.name + '" tidak diizinkan. Hanya PDF dan Excel.');
+              continue;
+            }
+            if (file.size > 16 * 1024 * 1024) {
+              alert('File "' + file.name + '" terlalu besar (maks 16MB).');
+              continue;
+            }
+            pendingFiles.push(file);
+            renderAttachedFiles();
+            // Upload immediately
+            uploadFile(file);
+          }
+          this.value = '';
+        });
+
+        function renderAttachedFiles() {
+          if (pendingFiles.length === 0) {
+            attachedFilesDiv.style.display = 'none';
+            return;
+          }
+          attachedFilesDiv.style.display = 'flex';
+          attachedFilesDiv.innerHTML = '';
+          pendingFiles.forEach(function(f, idx) {
+            var ext = f.name.split('.').pop().toUpperCase();
+            var icon = ext === 'PDF' ? '📄' : '📊';
+            var pill = document.createElement('span');
+            pill.className = 'file-pill';
+            pill.innerHTML = '<span class="file-icon">' + icon + '</span>' + escapeHtml(f.name) +
+              ' <span class="remove-file" data-idx="' + idx + '">×</span>';
+            attachedFilesDiv.appendChild(pill);
+          });
+          attachedFilesDiv.querySelectorAll('.remove-file').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+              pendingFiles.splice(parseInt(this.dataset.idx), 1);
+              renderAttachedFiles();
+            });
+          });
+        }
+
+        function uploadFile(file) {
+          var fd = new FormData();
+          fd.append('file', file);
+          fetch('{{ url_for("api_upload") }}', {
+            method: 'POST',
+            body: fd
+          })
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            if (data.error) alert('Upload gagal: ' + data.error);
+          })
+          .catch(function(err) {
+            alert('Upload error: ' + err.message);
+          });
+        }
+
+        // ===================== FILE PANEL =====================
+        var uploadFileBtn = document.getElementById('uploadFileBtn');
+        var fileInputPanel = document.getElementById('fileInputPanel');
+
+        uploadFileBtn.addEventListener('click', function() { fileInputPanel.click(); });
+        fileInputPanel.addEventListener('change', function() {
+          for (var i = 0; i < this.files.length; i++) {
+            var file = this.files[i];
+            var ext = file.name.split('.').pop().toLowerCase();
+            if (['pdf', 'xlsx', 'xls'].indexOf(ext) === -1) {
+              alert('Format file tidak diizinkan. Hanya PDF dan Excel.');
+              continue;
+            }
+            uploadFile(file);
+          }
+          this.value = '';
+          setTimeout(loadFiles, 500);
+        });
+
+        function loadFiles() {
+          fetch('{{ url_for("api_files") }}')
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            var list = document.getElementById('fileList');
+            if (!data.files || data.files.length === 0) {
+              list.innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><p>Belum ada file yang diupload.</p></div>';
+              return;
+            }
+            var html = '<div class="table-wrap"><table><thead><tr><th>Nama File</th><th>Tipe</th><th>Ukuran</th><th>Tanggal</th><th>Aksi</th></tr></thead><tbody>';
+            data.files.forEach(function(f) {
+              var icon = f.type === 'PDF' ? '📄' : '📊';
+              html += '<tr><td>' + icon + ' ' + escapeHtml(f.name) + '</td><td><span class="pill">' + f.type + '</span></td><td>' + f.size + '</td><td style="font-family:var(--font-mono);font-size:12px;">' + f.date + '</td>';
+              html += '<td><button class="btn btn-sm btn-danger" onclick="deleteFile(' + f.id + ')">Hapus</button></td></tr>';
+            });
+            html += '</tbody></table></div>';
+            list.innerHTML = html;
+          });
+        }
+
+        window.deleteFile = function(id) {
+          if (!confirm('Hapus file ini?')) return;
+          fetch('/api/files/' + id + '/delete', { method: 'POST' })
+          .then(function(r) { return r.json(); })
+          .then(function() { loadFiles(); });
+        };
+
+        // ===================== ACTIVITY HISTORY =====================
+        function loadActivities() {
+          fetch('{{ url_for("api_activities") }}')
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            var list = document.getElementById('activityList');
+            if (!data.activities || data.activities.length === 0) {
+              list.innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><p>Belum ada aktivitas tercatat.</p></div>';
+              return;
+            }
+            var html = '';
+            data.activities.forEach(function(a) {
+              html += '<div class="activity-item"><div class="activity-dot"></div><div>';
+              html += '<div class="activity-text">' + escapeHtml(a.action) + '</div>';
+              if (a.detail) html += '<div style="font-size:12px;color:var(--muted);margin-top:2px;">' + escapeHtml(a.detail) + '</div>';
+              html += '<div class="activity-time">' + a.time + '</div>';
+              html += '</div></div>';
+            });
+            list.innerHTML = html;
+          });
+        }
+
+        // Scroll to bottom on load
+        scrollChat();
+
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hubungi Kami — SobatHitung</title>
+    <meta
+      name="description"
+      content="Hubungi tim SobatHitung untuk pertanyaan, saran, atau kolaborasi."
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/shared.css') }}"
+    />
+    <style>
+      .contact-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 48px;
+        align-items: start;
+      }
+      .contact-info-card h3 {
+        margin-bottom: 20px;
+      }
+      .map-placeholder {
+        border-radius: var(--radius-md);
+      }
+      @media (max-width: 768px) {
+        .contact-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Top Navigation -->
+    <nav class="topnav" data-od-id="topnav">
+      <div class="container">
+        <a href="{{ url_for('landing') }}" class="brand" data-od-id="brand-link"
+          >SobatHitung</a
+        >
+        <ul class="nav-links" id="navLinks">
+          <li><a href="{{ url_for('landing') }}">Beranda</a></li>
+          <li><a href="{{ url_for('about') }}">Tentang</a></li>
+          <li><a href="{{ url_for('contact') }}" class="active">Kontak</a></li>
+          <li>
+            <a
+              href="{{ url_for('login') }}"
+              class="btn btn-primary btn-sm nav-cta"
+              data-od-id="nav-login"
+              >Masuk</a
+            >
+          </li>
+        </ul>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+      </div>
+    </nav>
+
+    <main id="content">
+      <!-- Hero -->
+      <section class="section" data-od-id="contact-hero">
+        <div class="container">
+          <span class="eyebrow">Kontak</span>
+          <h2>Hubungi Kami</h2>
+          <p class="text-muted" style="font-size: 17px; max-width: 480px">
+            Punya pertanyaan, saran, atau ingin berkolaborasi? Kami senang
+            mendengar dari Anda.
+          </p>
+        </div>
+      </section>
+
+      <!-- Contact Form + Info -->
+      <section class="section-sm" data-od-id="contact-body">
+        <div class="container">
+          <div class="contact-grid">
+            <!-- Form -->
+            <div class="card" data-od-id="contact-form-card">
+              <h3 style="margin-bottom: 20px">Kirim Pesan</h3>
+              <form id="contactForm" novalidate>
+                <div class="grid-2" style="gap: 16px">
+                  <div class="form-group">
+                    <label class="form-label" for="cName">Nama Lengkap</label>
+                    <input
+                      class="form-input"
+                      type="text"
+                      id="cName"
+                      name="name"
+                      placeholder="John Doe"
+                      required
+                    />
+                    <div class="form-error" id="cNameError"></div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="cEmail">Email</label>
+                    <input
+                      class="form-input"
+                      type="email"
+                      id="cEmail"
+                      name="email"
+                      placeholder="email@contoh.com"
+                      required
+                    />
+                    <div class="form-error" id="cEmailError"></div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="cSubject">Subjek</label>
+                  <input
+                    class="form-input"
+                    type="text"
+                    id="cSubject"
+                    name="subject"
+                    placeholder="Tentang apa pesan Anda?"
+                    required
+                  />
+                  <div class="form-error" id="cSubjectError"></div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="cMessage">Pesan</label>
+                  <textarea
+                    class="form-textarea"
+                    id="cMessage"
+                    name="message"
+                    rows="5"
+                    placeholder="Tulis pesan Anda di sini..."
+                    required
+                    style="min-height: 120px; resize: vertical"
+                  ></textarea>
+                  <div class="form-error" id="cMessageError"></div>
+                </div>
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  data-od-id="contact-submit"
+                >
+                  Kirim Pesan
+                </button>
+              </form>
+            </div>
+
+            <!-- Info -->
+            <div class="contact-info-card" data-od-id="contact-info">
+              <h3>Informasi Kontak</h3>
+              <div class="info-item">
+                <div class="icon-wrap">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M4 4h16c1 0 2 1 2 2v12c0 1-1 2-2 2H4c-1 0-2-1-2-2V6c0-1 1-2 2-2z"
+                    />
+                    <polyline points="22,6 12,13 2,6" />
+                  </svg>
+                </div>
+                <div>
+                  <h4>Email</h4>
+                  <p>anandatechnologysolution@gmail.com</p>
+                </div>
+              </div>
+              <div class="info-item">
+                <div class="icon-wrap">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <h4>Telepon</h4>
+                  <p>+62 56 9206 0498</p>
+                </div>
+              </div>
+              <div class="info-item">
+                <div class="icon-wrap">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                </div>
+                <div>
+                  <h4>Alamat</h4>
+                  <p>Kabupaten Bogor, Indonesia</p>
+                </div>
+              </div>
+              <div class="ph-img map-placeholder" data-od-id="map-placeholder">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3965.508936378549!2d106.96211907409788!3d-6.328033961917234!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e6993c43f5a657d%3A0xb1598ebf64ce5f7f!2sPT%20Ananda%20Technology%20Solution!5e0!3m2!1sid!2sid!4v1783387458380!5m2!1sid!2sid"
+                  width="600"
+                  height="450"
+                  style="border: 0"
+                  allowfullscreen=""
+                  loading="lazy"
+                  referrerpolicy="strict-origin-when-cross-origin"
+                ></iframe>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">Pesan berhasil dikirim!</div>
+
+    <!-- Footer -->
+    <footer class="site-footer" data-od-id="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-col">
+            <h4>SobatHitung</h4>
+            <p style="max-width: 260px">
+              AI Finance Assistant &mdash; mengubah operasi keuangan kompleks
+              menjadi alur kerja cerdas dan otomatis.
+            </p>
+          </div>
+          <div class="footer-col">
+            <h4>Produk</h4>
+            <ul>
+              <li><a href="{{ url_for('landing') }}">Beranda</a></li>
+              <li><a href="{{ url_for('about') }}">Tentang Kami</a></li>
+              <li><a href="{{ url_for('contact') }}">Kontak</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Akun</h4>
+            <ul>
+              <li><a href="{{ url_for('register') }}">Daftar</a></li>
+              <li><a href="{{ url_for('login') }}">Masuk</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          &copy; 2026 SobatHitung — AMD ACT II Hackathon Project
+        </div>
+      </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/contact.js') }}"></script>
+  </body>
+</html>

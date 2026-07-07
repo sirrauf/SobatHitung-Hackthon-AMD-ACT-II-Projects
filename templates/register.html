@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Daftar — SobatHitung</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/shared.css') }}"
+    />
+  </head>
+  <body>
+    <nav class="topnav">
+      <div class="container">
+        <a href="{{ url_for('landing') }}" class="brand">SobatHitung</a>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="{{ url_for('landing') }}">Beranda</a></li>
+          <li><a href="{{ url_for('about') }}">Tentang</a></li>
+          <li><a href="{{ url_for('contact') }}">Kontak</a></li>
+          <li>
+            <a
+              href="{{ url_for('login') }}"
+              class="btn btn-primary btn-sm nav-cta"
+              >Masuk</a
+            >
+          </li>
+        </ul>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+      </div>
+    </nav>
+
+    <main id="content">
+      <div class="auth-page">
+        <div class="auth-card">
+          <h2>Buat Akun Baru</h2>
+          <p class="subtitle">
+            Daftar gratis dan mulai kelola keuangan dengan SobatHitung.
+          </p>
+
+          {% with messages = get_flashed_messages(with_categories=true) %} {% if
+          messages %} {% for category, message in messages %}
+          <div
+            class="flash-msg flash-{{ category }}"
+            style="padding:10px 14px;border-radius:var(--radius-sm);margin-bottom:16px;font-size:14px;
+                {% if category == 'danger' %}background:oklch(95% 0.04 20);color:var(--danger);border:1px solid oklch(88% 0.06 20);
+                {% elif category == 'success' %}background:oklch(95% 0.04 145);color:var(--success);border:1px solid oklch(88% 0.06 145);
+                {% elif category == 'warning' %}background:oklch(95% 0.04 80);color:var(--warn);border:1px solid oklch(88% 0.06 80);
+                {% else %}background:var(--accent-bg);color:var(--accent);border:1px solid var(--border);{% endif %}"
+          >
+            {{ message }}
+          </div>
+          {% endfor %} {% endif %} {% endwith %}
+
+          <form method="POST" action="{{ url_for('register') }}">
+            <div class="form-group">
+              <label class="form-label" for="rName">Nama Lengkap</label>
+              <input
+                class="form-input"
+                type="text"
+                id="rName"
+                name="nama"
+                placeholder="John Doe"
+                required
+                minlength="2"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="rEmail">Email</label>
+              <input
+                class="form-input"
+                type="email"
+                id="rEmail"
+                name="email"
+                placeholder="email@contoh.com"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="rPassword">Password</label>
+              <input
+                class="form-input"
+                type="password"
+                id="rPassword"
+                name="password"
+                placeholder="Minimal 8 karakter"
+                required
+                minlength="8"
+              />
+              <div class="form-hint">
+                Gunakan minimal 8 karakter dengan huruf dan angka.
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="rPasswordConfirm"
+                >Konfirmasi Password</label
+              >
+              <input
+                class="form-input"
+                type="password"
+                id="rPasswordConfirm"
+                name="password_confirm"
+                placeholder="Ulangi password"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-checkbox">
+                <input type="checkbox" id="rTerms" required />
+                Saya setuju dengan <a href="#">Syarat &amp; Ketentuan</a>
+              </label>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%">
+              Daftar
+            </button>
+          </form>
+          <div class="auth-divider">atau</div>
+          <p class="auth-link">
+            Sudah punya akun? <a href="{{ url_for('login') }}">Masuk di sini</a>
+          </p>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-bottom">
+          &copy; 2026 SobatHitung &mdash; AMD ACT II Hackathon Project
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      var hamburger = document.getElementById("hamburger");
+      var navLinks = document.getElementById("navLinks");
+      if (hamburger && navLinks) {
+        hamburger.addEventListener("click", function () {
+          navLinks.classList.toggle("open");
+        });
+      }
+    </script>
+  </body>
+</html>

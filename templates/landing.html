@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SobatHitung — AI Finance Assistant untuk Bisnis</title>
+    <meta
+      name="description"
+      content="SobatHitung adalah AI Finance Assistant yang membantu UMKM, startup, dan tim keuangan mengelola pembukuan, laporan, pajak, dan analisis bisnis."
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/shared.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/landing.css') }}"
+    />
+  </head>
+  <body>
+    <!-- Top Navigation -->
+    <nav class="topnav" data-od-id="topnav">
+      <div class="container">
+        <a href="{{ url_for('landing') }}" class="brand" data-od-id="brand-link"
+          >SobatHitung</a
+        >
+        <ul class="nav-links" id="navLinks">
+          <li><a href="{{ url_for('landing') }}" class="active">Beranda</a></li>
+          <li><a href="{{ url_for('about') }}">Tentang</a></li>
+          <li><a href="{{ url_for('contact') }}">Kontak</a></li>
+          <li>
+            <a
+              href="{{ url_for('register') }}"
+              class="btn btn-primary btn-sm nav-cta"
+              data-od-id="nav-register"
+              >Daftar</a
+            >
+          </li>
+        </ul>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+      </div>
+    </nav>
+
+    <main id="content">
+      <!-- Hero -->
+      <section class="hero" data-od-id="hero">
+        <div class="container">
+          <span class="eyebrow"
+            >AMD ACT II Hackathon &mdash; AI Agents LLM</span
+          >
+          <h1>Keuangan Bisnis,<br />Kini Cerdas &amp; Otomatis</h1>
+          <p>
+            SobatHitung adalah AI Finance Assistant yang membantu UMKM, startup,
+            dan tim keuangan mengelola pembukuan, laporan, pajak, dan analisis
+            bisnis &mdash; semuanya dalam satu platform.
+          </p>
+          <div class="hero-actions">
+            <a
+              href="{{ url_for('register') }}"
+              class="btn btn-primary"
+              data-od-id="hero-cta"
+              >Mulai Gratis</a
+            >
+            <a
+              href="{{ url_for('dashboard') }}"
+              class="btn btn-secondary"
+              data-od-id="hero-demo"
+              >Coba Demo</a
+            >
+          </div>
+          <div class="hero-image">
+            <div class="ph-img" data-od-id="hero-image">
+              Preview Dashboard &mdash; AI Finance Assistant
+            </div>
+          </div>
+          <div class="audience-bar" data-od-id="audience-bar">
+            <span class="audience-pill">UMKM</span>
+            <span class="audience-pill">Startup</span>
+            <span class="audience-pill">Tim Keuangan</span>
+            <span class="audience-pill">Akuntan</span>
+            <span class="audience-pill">Pemilik Bisnis</span>
+            <span class="audience-pill">Konsultan Pajak</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Features — Bento Grid -->
+      <section class="section" data-od-id="features">
+        <div class="container">
+          <div class="section-header center fade-up">
+            <span class="eyebrow">Fitur</span>
+            <h2>Semua yang Bisnis Anda Butuhkan</h2>
+            <p>
+              Dirancang untuk mengubah operasi keuangan kompleks menjadi alur
+              kerja cerdas dan otomatis.
+            </p>
+          </div>
+          <div class="bento-grid">
+            <!-- Featured: AI Assistant -->
+            <div
+              class="bento-card featured fade-up"
+              data-od-id="feature-ai-assistant"
+            >
+              <div class="card-icon">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                  />
+                </svg>
+              </div>
+              <h3>AI Finance Assistant</h3>
+              <p>
+                Asisten percakapan AI yang memahami konteks bisnis Anda. Tanya
+                tentang data keuangan, akuntansi, cash flow, atau minta
+                rekomendasi strategis &mdash; semuanya dalam bahasa natural.
+              </p>
+            </div>
+            <!-- Standard: Accounting -->
+            <div
+              class="bento-card standard fade-up"
+              data-od-id="feature-accounting"
+            >
+              <div class="card-icon">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                  />
+                  <polyline points="14 2 14 8 20 8" />
+                </svg>
+              </div>
+              <h3>Pembukuan Otomatis</h3>
+              <p>
+                AI mencatat dan mengategorikan transaksi secara otomatis. Upload
+                invoice, dan sistem memprosesnya tanpa input manual.
+              </p>
+            </div>
+            <!-- Small: Reporting -->
+            <div
+              class="bento-card small fade-up"
+              data-od-id="feature-reporting"
+            >
+              <div class="card-icon">
+                <svg viewBox="0 0 24 24">
+                  <line x1="18" y1="20" x2="18" y2="10" />
+                  <line x1="12" y1="20" x2="12" y2="4" />
+                  <line x1="6" y1="20" x2="6" y2="14" />
+                </svg>
+              </div>
+              <h3>Laporan Instan</h3>
+              <p>
+                Generate laporan laba rugi, neraca, dan arus kas dalam satu
+                klik.
+              </p>
+            </div>
+            <!-- Small: Analytics -->
+            <div
+              class="bento-card small fade-up"
+              data-od-id="feature-analytics"
+            >
+              <div class="card-icon">
+                <svg viewBox="0 0 24 24">
+                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                </svg>
+              </div>
+              <h3>Analitik Bisnis</h3>
+              <p>
+                Rekomendasi berbasis AI untuk meningkatkan profitabilitas dan
+                efisiensi.
+              </p>
+            </div>
+            <!-- Small: Tax -->
+            <div class="bento-card small fade-up" data-od-id="feature-tax">
+              <div class="card-icon">
+                <svg viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="16" x2="12" y2="12" />
+                  <line x1="12" y1="8" x2="12.01" y2="8" />
+                </svg>
+              </div>
+              <h3>Pajak Cerdas</h3>
+              <p>
+                Perhitungan pajak otomatis dan monitoring kepatuhan perpajakan.
+              </p>
+            </div>
+            <!-- Small: Cashflow -->
+            <div class="bento-card small fade-up" data-od-id="feature-cashflow">
+              <div class="card-icon">
+                <svg viewBox="0 0 24 24">
+                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                  <polyline points="17 6 23 6 23 12" />
+                </svg>
+              </div>
+              <h3>Peramalan Arus Kas</h3>
+              <p>
+                Prediksi tren arus kas masa depan dengan AI untuk keputusan yang
+                lebih baik.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Stats -->
+      <section class="section-sm cta-section" data-od-id="stats">
+        <div class="container">
+          <div class="grid-4">
+            <div class="stat-card fade-up">
+              <div class="stat-number">10</div>
+              <div class="stat-label">Modul Keuangan</div>
+            </div>
+            <div class="stat-card fade-up">
+              <div class="stat-number">AI</div>
+              <div class="stat-label">Driven by LLM</div>
+            </div>
+            <div class="stat-card fade-up">
+              <div class="stat-number">Real-time</div>
+              <div class="stat-label">Decision Support</div>
+            </div>
+            <div class="stat-card fade-up">
+              <div class="stat-number">100%</div>
+              <div class="stat-label">Data Privat</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="section cta-final" data-od-id="cta">
+        <div class="container text-center">
+          <span class="eyebrow">Mulai Sekarang</span>
+          <h2>Siap Mengelola Keuangan dengan AI?</h2>
+          <p
+            style="
+              color: var(--muted);
+              max-width: 480px;
+              margin: 12px auto 28px;
+              font-size: 17px;
+            "
+          >
+            Bergabung dengan SobatHitung dan rasakan kemudahan pengelolaan
+            keuangan bisnis yang cerdas dan otomatis.
+          </p>
+          <a
+            href="{{ url_for('register') }}"
+            class="btn btn-primary"
+            data-od-id="cta-button"
+            >Daftar Gratis</a
+          >
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer" data-od-id="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-col">
+            <h4>SobatHitung</h4>
+            <p style="max-width: 260px">
+              AI Finance Assistant &mdash; mengubah operasi keuangan kompleks
+              menjadi alur kerja cerdas dan otomatis.
+            </p>
+          </div>
+          <div class="footer-col">
+            <h4>Produk</h4>
+            <ul>
+              <li><a href="{{ url_for('landing') }}">Beranda</a></li>
+              <li><a href="{{ url_for('about') }}">Tentang Kami</a></li>
+              <li><a href="{{ url_for('contact') }}">Kontak</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Akun</h4>
+            <ul>
+              <li><a href="{{ url_for('register') }}">Daftar</a></li>
+              <li><a href="{{ url_for('login') }}">Masuk</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Repo</h4>
+            <ul>
+              <li>
+                <a
+                  href="https://github.com/sirrauf/SobatHitung-Hackthon-AMD-ACT-II-Projects"
+                  target="_blank"
+                  rel="noopener"
+                  >GitHub</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          &copy; 2026 SobatHitung &mdash; AMD ACT II Hackathon Project
+        </div>
+      </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/landing.js') }}"></script>
+  </body>
+</html>
