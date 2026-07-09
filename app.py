@@ -10,6 +10,8 @@ import uuid
 import os
 import json
 import requests
+import pdfplumber
+import openpyxl
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -82,6 +84,86 @@ Selalu jawab dalam bahasa Indonesia yang profesional dan mudah dipahami. Berikan
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def extract_file_content(file_id, user_id):
+    """Extract text content from an uploaded PDF or Excel file.
+    Returns a string with the extracted content, or an error message."""
+    try:
+        uploaded = UploadedFile.get(id=file_id)
+        if not uploaded or uploaded.user.id != user_id:
+            return f"[File ID {file_id}: tidak ditemukan atau akses ditolak]"
+
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], uploaded.filename)
+        if not os.path.exists(file_path):
+            return f"[File '{uploaded.original_name}': file fisik tidak ditemukan di server]"
+
+        ext = uploaded.file_type.lower()
+        content_parts = []
+
+        if ext == 'pdf':
+            with pdfplumber.open(file_path) as pdf:
+                for i, page in enumerate(pdf.pages, 1):
+                    text = page.extract_text()
+                    if text and text.strip():
+                        content_parts.append(f"--- Halaman {i} ---\n{text.strip()}")
+                    # Also try to extract tables from the page
+                    tables = page.extract_tables()
+                    for t_idx, table in enumerate(tables, 1):
+                        if table:
+                            table_text = f"\n[Tabel {t_idx} - Halaman {i}]\n"
+                            for row in table:
+                                cleaned_row = [str(cell) if cell is not None else '' for cell in row]
+                                table_text += ' | '.join(cleaned_row) + '\n'
+                            content_parts.append(table_text)
+
+            if not content_parts:
+                return f"[File '{uploaded.original_name}': PDF tidak mengandung teks yang bisa diekstrak (mungkin scan/gambar)]"
+
+        elif ext in ('xlsx', 'xls'):
+            if ext == 'xlsx':
+                wb = openpyxl.load_workbook(file_path, read_only=True, data_only=True)
+                for sheet_name in wb.sheetnames:
+                    ws = wb[sheet_name]
+                    sheet_data = []
+                    for row in ws.iter_rows(values_only=True):
+                        cleaned_row = [str(cell) if cell is not None else '' for cell in row]
+                        if any(c.strip() for c in cleaned_row):  # skip completely empty rows
+                            sheet_data.append(' | '.join(cleaned_row))
+                    if sheet_data:
+                        content_parts.append(f"--- Sheet: {sheet_name} ---\n" + '\n'.join(sheet_data))
+                wb.close()
+            else:
+                # .xls format — use xlrd
+                import xlrd
+                wb = xlrd.open_workbook(file_path)
+                for sheet_name in wb.sheet_names():
+                    ws = wb.sheet_by_name(sheet_name)
+                    sheet_data = []
+                    for row_idx in range(ws.nrows):
+                        row = ws.row_values(row_idx)
+                        cleaned_row = [str(cell) if cell is not None else '' for cell in row]
+                        if any(c.strip() for c in cleaned_row):
+                            sheet_data.append(' | '.join(cleaned_row))
+                    if sheet_data:
+                        content_parts.append(f"--- Sheet: {sheet_name} ---\n" + '\n'.join(sheet_data))
+
+            if not content_parts:
+                return f"[File '{uploaded.original_name}': Excel kosong atau tidak ada data]"
+
+        else:
+            return f"[File '{uploaded.original_name}': format '{ext}' tidak didukung untuk ekstraksi]"
+
+        # Truncate if too long (limit ~8000 chars to avoid overloading the LLM)
+        full_content = '\n\n'.join(content_parts)
+        max_chars = 8000
+        if len(full_content) > max_chars:
+            full_content = full_content[:max_chars] + f"\n\n... [Konten dipotong, total {len(full_content)} karakter, ditampilkan {max_chars} karakter pertama]"
+
+        return f"📎 File: {uploaded.original_name} ({ext.upper()})\n{full_content}"
+
+    except Exception as e:
+        return f"[Error membaca file ID {file_id}: {str(e)}]"
 
 
 def hash_password(plain):
@@ -407,6 +489,7 @@ def api_chat():
     data = request.get_json()
     prompt = data.get('prompt', '').strip()
     model = data.get('model', 'deepseek-r1:32b')
+    file_ids = data.get('file_ids', [])  # NEW: receive attached file IDs
     is_error_response = False
 
     if not prompt:
@@ -414,6 +497,42 @@ def api_chat():
 
     if model not in AVAILABLE_MODELS:
         return jsonify({'error': 'Model tidak valid'}), 400
+
+    # NEW: Extract content from attached files
+    file_contents = []
+    file_names = []
+    if file_ids:
+        for fid in file_ids:
+            try:
+                fid_int = int(fid)
+                content = extract_file_content(fid_int, user.id)
+                file_contents.append(content)
+                # Get file name for logging
+                uploaded = UploadedFile.get(id=fid_int)
+                if uploaded:
+                    file_names.append(uploaded.original_name)
+            except (ValueError, TypeError):
+                file_contents.append(f"[File ID tidak valid: {fid}]")
+
+    # Build the full prompt with file content
+    full_prompt_parts = [FINANCE_SYSTEM_PROMPT]
+
+    if file_contents:
+        full_prompt_parts.append("\n\n=== DATA DARI FILE YANG DILAMPIRKAN ===")
+        for fc in file_contents:
+            full_prompt_parts.append(fc)
+        full_prompt_parts.append("=== AKHIR DATA FILE ===")
+
+    full_prompt_parts.append(f"\n\nPertanyaan pengguna: {prompt}")
+
+    if file_contents:
+        full_prompt_parts.append(
+            "\n\nInstruksi tambahan: Analisis data dari file yang dilampirkan di atas "
+            "sesuai dengan pertanyaan pengguna. Berikan jawaban yang detail dan terstruktur "
+            "berdasarkan data tersebut."
+        )
+
+    full_prompt = '\n'.join(full_prompt_parts)
 
     # Tentukan nama model yang tepat di Ollama (bisa berbeda dari key)
     model_to_use = model
@@ -432,7 +551,7 @@ def api_chat():
             f'{OLLAMA_BASE_URL}/api/generate',
             json={
                 'model': model_to_use,
-                'prompt': f"{FINANCE_SYSTEM_PROMPT}\n\nPertanyaan pengguna: {prompt}",
+                'prompt': full_prompt,
                 'stream': False
             },
             timeout=300
@@ -476,12 +595,21 @@ def api_chat():
         is_error_response = True
         ai_response = f"❌ **Error tidak terduga:** {str(e)}"
 
+    # Build log detail with file info
+    log_detail = f'Model: {AVAILABLE_MODELS[model]["name"]} | Status: {"Error" if is_error_response else "OK"}'
+    if file_names:
+        log_detail += f' | Files: {", ".join(file_names)}'
+
     # Simpan ke history hanya jika BUKAN pesan error dan user mengaktifkan save_history
     if user.save_history and not is_error_response:
+        # Include file attachment info in saved prompt
+        saved_prompt = prompt
+        if file_names:
+            saved_prompt = f"[📎 {', '.join(file_names)}]\n{prompt}"
         ChatHistory(
             user=user,
             model_name=model,
-            prompt=prompt,
+            prompt=saved_prompt,
             response=ai_response
         )
         commit()
@@ -490,7 +618,7 @@ def api_chat():
     ActivityLog(
         user=user,
         action='Menggunakan AI Chat',
-        detail=f'Model: {AVAILABLE_MODELS[model]["name"]} | Status: {"Error" if is_error_response else "OK"}'
+        detail=log_detail
     )
     commit()
 

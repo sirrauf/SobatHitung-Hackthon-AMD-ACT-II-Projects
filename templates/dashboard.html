@@ -792,14 +792,24 @@
 
         function scrollChat() { chatContainer.scrollTop = chatContainer.scrollHeight; }
 
-        function addUserMsg(text) {
+        function addUserMsg(text, fileNames) {
           if (emptyState) emptyState.style.display = 'none';
           var now  = new Date();
           var time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
           var div  = document.createElement('div');
           div.className = 'chat-msg user-msg';
+          var fileBadges = '';
+          if (fileNames && fileNames.length > 0) {
+            fileBadges = '<div style="margin-bottom:6px;">';
+            fileNames.forEach(function(fn) {
+              var ext = fn.split('.').pop().toUpperCase();
+              var icon = ext === 'PDF' ? '📄' : '📊';
+              fileBadges += '<span style="display:inline-flex;align-items:center;gap:4px;background:var(--accent-bg);border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:11px;margin-right:4px;margin-bottom:4px;">' + icon + ' ' + escapeHtml(fn) + '</span>';
+            });
+            fileBadges += '</div>';
+          }
           div.innerHTML = '<div class="chat-avatar">' + userInitials + '</div>' +
-            '<div class="chat-bubble">' + escapeHtml(text) + '<span class="timestamp">' + time + '</span></div>';
+            '<div class="chat-bubble">' + fileBadges + escapeHtml(text) + '<span class="timestamp">' + time + '</span></div>';
           chatContainer.appendChild(div);
           scrollChat();
         }
@@ -864,16 +874,36 @@
             return;
           }
 
+          // Guard: jangan kirim jika ada file yang masih uploading
+          if (uploadingCount > 0) {
+            alert('⏳ Tunggu semua file selesai diupload terlebih dahulu.');
+            return;
+          }
+
+          // Capture current file state before clearing
+          var currentFileIds = uploadedFileIds.slice();
+          var currentFileNames = pendingFiles.map(function(f) { return f.name; });
+
           promptInput.value = '';
           promptInput.style.height = 'auto';
-          addUserMsg(text);
+          addUserMsg(text, currentFileNames);
           addTypingIndicator();
           sendBtn.disabled = true;
+
+          // Clear attachments after capturing
+          pendingFiles = [];
+          uploadedFileIds = [];
+          renderAttachedFiles();
+
+          var requestBody = { prompt: text, model: sel };
+          if (currentFileIds.length > 0) {
+            requestBody.file_ids = currentFileIds;
+          }
 
           fetch('{{ url_for("api_chat") }}', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ prompt: text, model: sel })
+            body: JSON.stringify(requestBody)
           })
           .then(function(r) { return r.json(); })
           .then(function(data) {
@@ -908,6 +938,8 @@
         var fileInput       = document.getElementById('fileInput');
         var attachedFilesDiv = document.getElementById('attachedFiles');
         var pendingFiles    = [];
+        var uploadedFileIds = [];  // NEW: track file IDs from server
+        var uploadingCount  = 0;   // NEW: track ongoing uploads
 
         attachBtn.addEventListener('click', function() { fileInput.click(); });
 
@@ -925,7 +957,7 @@
             }
             pendingFiles.push(file);
             renderAttachedFiles();
-            uploadFile(file);
+            uploadFileForChat(file, pendingFiles.length - 1);
           }
           this.value = '';
         });
@@ -937,27 +969,59 @@
           pendingFiles.forEach(function(f, idx) {
             var ext  = f.name.split('.').pop().toUpperCase();
             var icon = ext === 'PDF' ? '📄' : '📊';
+            var isUploading = (uploadedFileIds[idx] === undefined || uploadedFileIds[idx] === null);
+            var statusIcon = isUploading ? ' ⏳' : ' ✅';
             var pill = document.createElement('span');
             pill.className = 'file-pill';
-            pill.innerHTML = '<span class="file-icon">' + icon + '</span>' + escapeHtml(f.name) +
+            pill.innerHTML = '<span class="file-icon">' + icon + '</span>' + escapeHtml(f.name) + statusIcon +
               ' <span class="remove-file" data-idx="' + idx + '">×</span>';
             attachedFilesDiv.appendChild(pill);
           });
           attachedFilesDiv.querySelectorAll('.remove-file').forEach(function(btn) {
             btn.addEventListener('click', function() {
-              pendingFiles.splice(parseInt(this.dataset.idx), 1);
+              var removeIdx = parseInt(this.dataset.idx);
+              pendingFiles.splice(removeIdx, 1);
+              uploadedFileIds.splice(removeIdx, 1);
               renderAttachedFiles();
             });
           });
         }
 
-        function uploadFile(file) {
+        function uploadFileForChat(file, index) {
           var fd = new FormData();
           fd.append('file', file);
+          uploadingCount++;
           fetch('{{ url_for("api_upload") }}', { method: 'POST', body: fd })
             .then(function(r) { return r.json(); })
-            .then(function(data) { if (data.error) alert('Upload gagal: ' + data.error); })
-            .catch(function(err) { alert('Upload error: ' + err.message); });
+            .then(function(data) {
+              uploadingCount--;
+              if (data.error) {
+                alert('Upload gagal: ' + data.error);
+                // Remove failed file from pending
+                var failIdx = pendingFiles.indexOf(file);
+                if (failIdx > -1) {
+                  pendingFiles.splice(failIdx, 1);
+                  uploadedFileIds.splice(failIdx, 1);
+                }
+              } else {
+                // Save the file ID from server response
+                var currentIdx = pendingFiles.indexOf(file);
+                if (currentIdx > -1) {
+                  uploadedFileIds[currentIdx] = data.file.id;
+                }
+              }
+              renderAttachedFiles();
+            })
+            .catch(function(err) {
+              uploadingCount--;
+              alert('Upload error: ' + err.message);
+              var failIdx = pendingFiles.indexOf(file);
+              if (failIdx > -1) {
+                pendingFiles.splice(failIdx, 1);
+                uploadedFileIds.splice(failIdx, 1);
+              }
+              renderAttachedFiles();
+            });
         }
 
         // ===================== FILE PANEL =====================
@@ -973,11 +1037,23 @@
               alert('Format file tidak diizinkan. Hanya PDF dan Excel.');
               continue;
             }
-            uploadFile(file);
+            uploadFilePanel(file);
           }
           this.value = '';
           setTimeout(loadFiles, 500);
         });
+
+        function uploadFilePanel(file) {
+          var fd = new FormData();
+          fd.append('file', file);
+          fetch('{{ url_for("api_upload") }}', { method: 'POST', body: fd })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+              if (data.error) alert('Upload gagal: ' + data.error);
+              else setTimeout(loadFiles, 300);
+            })
+            .catch(function(err) { alert('Upload error: ' + err.message); });
+        }
 
         function loadFiles() {
           fetch('{{ url_for("api_files") }}')

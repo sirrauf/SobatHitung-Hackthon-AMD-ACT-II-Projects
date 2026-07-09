@@ -5,3 +5,6 @@ bcrypt
 PyMySQL
 python-dotenv
 requests
+pdfplumber
+openpyxl
+xlrd
