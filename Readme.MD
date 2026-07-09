@@ -1,4 +1,4 @@
-# Release date: 07 July 2026
+# Release Date: July 7, 2026
 
 ---
 
@@ -15,14 +15,14 @@
 - [Features](#-features)
 - [Target Users](#-target-users)
 - [Vision](#-vision)
-- [Dokumentasi Teknis](#%EF%B8%8F-dokumentasi-teknis)
-  - [1. Struktur Arsitektur Folder](#1-struktur-arsitektur-folder)
-  - [2. Konfigurasi Environment (.env)](#2-konfigurasi-environment-env)
-  - [3. Instalasi dan Aktivasi Python Virtual Environment (venv)](#3-instalasi-dan-aktivasi-python-virtual-environment-venv)
-  - [4. Instalasi Dependensi (requirements.txt)](#4-instalasi-dependensi-requirementstxt)
-  - [5. Persiapan Database MySQL](#5-persiapan-database-mysql)
-  - [6. Setup Ollama (AI LLM Server)](#6-setup-ollama-ai-llm-server)
-  - [7. Cara Menjalankan Proyek SobatHitung](#7-cara-menjalankan-proyek-sobathitung)
+- [Technical Documentation](#%EF%B8%8F-technical-documentation)
+  - [1. Project Folder Structure](#1-project-folder-structure)
+  - [2. Environment Configuration (.env)](#2-environment-configuration-env)
+  - [3. Python Virtual Environment Installation & Activation](#3-python-virtual-environment-installation--activation)
+  - [4. Installing Dependencies (requirements.txt)](#4-installing-dependencies-requirementstxt)
+  - [5. MySQL Database Setup](#5-mysql-database-setup)
+  - [6. Ollama Setup (AI LLM Server)](#6-ollama-setup-ai-llm-server)
+  - [7. Running the SobatHitung Project](#7-running-the-sobathitung-project)
 
 ---
 
@@ -83,68 +83,68 @@ Empowering businesses with AI Agents that transform complex financial operations
 
 ---
 
-## 🛠️ Dokumentasi Teknis
+## 🛠️ Technical Documentation
 
-Bagian ini menjelaskan struktur teknis dari proyek SobatHitung, konfigurasi environment, setup virtual environment, cara instalasi dependensi, hingga perintah untuk menjalankan aplikasi di lingkungan lokal.
+This section describes the technical structure of the SobatHitung project, including environment configuration, virtual environment setup, dependency installation instructions, and the commands required to run the application in a local development environment.
 
-### 1. Struktur Arsitektur Folder
+### 1. Project Folder Structure
 
-Berikut adalah visualisasi struktur direktori proyek SobatHitung beserta penjelasannya:
+The following is a visualization of the SobatHitung project directory structure along with descriptions of each component:
 
 ```text
 DataSobatHitung/
 │
-├── static/                   # File aset statis (CSS, JS, Gambar)
-│   ├── css/                  # File-file styling CSS
-│   │   ├── index.css         # Styling halaman utama/dashboard explorer
-│   │   ├── landing.css       # Styling halaman landing
-│   │   └── shared.css        # Variabel CSS global, reset, dan utility styling
-│   └── js/                   # File-file backend logic sisi klien (JavaScript/AJAX)
-│       ├── auth.js           # Penanganan autentikasi (login/register/reset)
-│       ├── contact.js        # Logika submit contact us
-│       ├── index.js          # Sederet interaktif navigasi main explorer
-│       ├── landing.js        # Animasi & navigasi di halaman landing
-│       └── profile.js        # Konfigurasi AJAX profile update settings
+├── static/                   # Static asset files (CSS, JS, Images)
+│   ├── css/                  # CSS styling files
+│   │   ├── index.css         # Styling for the main/dashboard explorer page
+│   │   ├── landing.css       # Styling for the landing page
+│   │   └── shared.css        # Global CSS variables, resets, and utility styles
+│   └── js/                   # Client-side logic files (JavaScript/AJAX)
+│       ├── auth.js           # Authentication handling (login/register/reset)
+│       ├── contact.js        # Contact Us form submission logic
+│       ├── index.js          # Interactive navigation for the main explorer
+│       ├── landing.js        # Animations & navigation for the landing page
+│       └── profile.js        # AJAX configuration for profile update settings
 │
-├── templates/                # File template Flask (HTML dengan rendering Jinja2)
-│   ├── 404.html              # Halaman error 404
-│   ├── about.html            # Informasi pengembang & visi misi
-│   ├── contact.html          # Form hubungi kami
-│   ├── dashboard.html        # Menu dashboard utama pengguna
-│   ├── email_reset.html      # Template email reset kata sandi
-│   ├── email_verify.html     # Template email verifikasi akun pendaftaran
-│   ├── forgot_password.html  # Halaman lupa kata sandi
-│   ├── index.html            # Halaman utama aplikasi / explorer
-│   ├── landing.html          # Landing page promosi
-│   ├── login.html            # Halaman masuk (login)
-│   ├── profile.html          # Pengaturan biodata & profil user
-│   ├── register.html         # Halaman pendaftaran user
-│   ├── reset_password.html   # Halaman memasukkan password baru
-│   └── verify.html           # Feedback verifikasi email berhasil
+├── templates/                # Flask template files (HTML with Jinja2 rendering)
+│   ├── 404.html              # 404 error page
+│   ├── about.html            # Developer information & project vision
+│   ├── contact.html          # Contact us form
+│   ├── dashboard.html        # Main user dashboard menu
+│   ├── email_reset.html      # Password reset email template
+│   ├── email_verify.html     # Account registration verification email template
+│   ├── forgot_password.html  # Forgot password page
+│   ├── index.html            # Main application/explorer page
+│   ├── landing.html          # Promotional landing page
+│   ├── login.html            # Login page
+│   ├── profile.html          # User profile & bio settings
+│   ├── register.html         # User registration page
+│   ├── reset_password.html   # New password entry page
+│   └── verify.html           # Email verification success feedback page
 │
-├── Model_LLM/                # Direktori model LLM (Large Language Model) lokal
-├── Logo/                     # Aset logo SobatHitung
-├── Screenshoot/              # Kumpulan dokumentasi tangkapan layar aplikasi
-├── uploads/                  # Direktori upload file user (PDF/Excel)
-├── app.py                    # Root aplikasi Flask (Rute, Logic, validasi server-side)
-├── models.py                 # Skema entity database (Pony ORM schema model)
-├── .env                      # Pengaturan variabel environment (rahasia/sensitif)
-├── requirements.txt          # Daftar package python dependencies
-├── Procfile                  # Konfigurasi deploy Web / WSGI server (Gunicorn)
-└── Readme.MD                 # Panduan dan dokumentasi teknis (file ini)
+├── Model_LLM/                # Local LLM (Large Language Model) directory
+├── Logo/                     # SobatHitung logo assets
+├── Screenshoot/              # Application screenshot documentation collection
+├── uploads/                  # User file upload directory (PDF/Excel)
+├── app.py                    # Flask application root (Routes, Logic, server-side validation)
+├── models.py                 # Database entity schema (Pony ORM schema model)
+├── .env                      # Environment variable settings (secret/sensitive)
+├── requirements.txt          # Python package dependency list
+├── Procfile                  # Web/WSGI server deployment configuration (Gunicorn)
+└── Readme.MD                 # Project guide and technical documentation (this file)
 ```
 
-**Penjelasan Komponen Utama:**
+**Key Component Descriptions:**
 
-- **`app.py`**: Berisi keseluruhan logika routes untuk Flask, konfigurasi mail server (Gmail SMTP), koneksi relational database dengan Pony ORM, pengontrolan autentikasi bersertifikat password hashing dengan `bcrypt`, restrukturasi rute AJAX profile settings, serta penanganan error 404.
-- **`models.py`**: Menggunakan Pony ORM untuk merelasikan schema database MySQL pada table `tbl_user`, menyertakan field data profil lengkap, penanda verifikasi email (`is_verified`), token penunjuk verifikasi, dan token reset password beserta masa berlakunya.
-- **`static/` & `templates/`**: Memisahkan antarmuka logic (Jinja2) dengan resources pendukung (raw CSS dan JS).
+- **`app.py`**: Contains all Flask route logic, Gmail SMTP mail server configuration, relational database connection via Pony ORM, authentication control with `bcrypt` password hashing, restructured AJAX profile settings routes, and 404 error handling.
+- **`models.py`**: Uses Pony ORM to define the MySQL database schema on the `tbl_user` table, including complete profile data fields, an email verification flag (`is_verified`), a verification token, and a password reset token along with its expiration time.
+- **`static/` & `templates/`**: Separates the Jinja2 logic layer from the supporting resources (raw CSS and JS files).
 
 ---
 
-### 2. Konfigurasi Environment (`.env`)
+### 2. Environment Configuration (`.env`)
 
-Aplikasi menggunakan library `python-dotenv` untuk memuat variabel sensitif dari file `.env`. Untuk menggunakan aplikasi, buat file bernama `.env` di root direktori dengan struktur variabel berikut:
+The application uses the `python-dotenv` library to load sensitive variables from the `.env` file. To use the application, create a file named `.env` in the project root directory with the following variable structure:
 
 ```ini
 # Flask configuration
@@ -167,27 +167,27 @@ OLLAMA_BASE_URL=http://localhost:11434
 
 > [!IMPORTANT]
 >
-> - `SECRETKEY` digunakan untuk keamanan enkripsi cookie/session Flask.
-> - `MAIL_PASSWORD` **bukanlah password Gmail biasa**, melainkan **App Password** 16 karakter yang dibuat melalui menu keamanan akun Google Anda (2-Step Verification).
-> - `OLLAMA_BASE_URL` menunjuk ke server Ollama lokal. Default: `http://localhost:11434`.
+> - `SECRETKEY` is used for Flask cookie/session encryption security.
+> - `MAIL_PASSWORD` is **not your regular Gmail password**; it is a **16-character App Password** generated through your Google account security settings (2-Step Verification).
+> - `OLLAMA_BASE_URL` points to the local Ollama server. Default: `http://localhost:11434`.
 
 ---
 
-### 3. Instalasi dan Aktivasi Python Virtual Environment (`venv`)
+### 3. Python Virtual Environment Installation & Activation
 
-Menggunakan virtual environment sangat direkomendasikan agar versi library di proyek tidak bertabrakan dengan environment global komputer Anda.
+Using a virtual environment is strongly recommended to prevent library version conflicts between the project and your computer's global environment.
 
-#### A. Membuat Virtual Environment (Jika belum ada)
+#### A. Creating a Virtual Environment (If one does not already exist)
 
-Jalankan perintah ini di terminal (Pastikan terminal berada di direktori proyek `DataSobatHitung`):
+Run this command in your terminal (make sure the terminal is in the `DataSobatHitung` project directory):
 
 ```bash
 python -m venv venv
 ```
 
-#### B. Mengaktifkan Virtual Environment
+#### B. Activating the Virtual Environment
 
-Sesuaikan perintah dengan Sistem Operasi dan interpreter terminal yang Anda gunakan:
+Adjust the command according to your operating system and terminal interpreter:
 
 - **Windows (PowerShell):**
   ```powershell
@@ -202,77 +202,77 @@ Sesuaikan perintah dengan Sistem Operasi dan interpreter terminal yang Anda guna
   source venv/bin/activate
   ```
 
-_Setelah aktif, Anda akan melihat tanda `(venv)` di sebelah kiri prompt terminal Anda._
+_Once activated, you will see the `(venv)` indicator on the left side of your terminal prompt._
 
 ---
 
-### 4. Instalasi Dependensi (`requirements.txt`)
+### 4. Installing Dependencies (`requirements.txt`)
 
-Setelah mengaktifkan Virtual Environment, Anda harus menginstal seluruh package Python yang dideklarasikan di file `requirements.txt`:
+After activating the Virtual Environment, install all Python packages declared in the `requirements.txt` file by running:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-**Daftar Dependency yang Dipasang (`requirements.txt`):**
+**List of Installed Dependencies (`requirements.txt`):**
 
-- **Flask**: Framework web Python utama.
-- **Flask-Mail**: Integrasi scheduler SMTP server untuk email verifikasi.
-- **pony**: Pony Object Relational Mapper (ORM) untuk interaksi database.
-- **bcrypt**: Algoritma hashing terpercaya untuk pengamanan password user.
-- **PyMySQL**: Python MySQL client library yang dihubungkan ke Pony ORM.
-- **python-dotenv**: Library untuk mempermudah pembacaan file konfigurasi `.env`.
-- **requests**: HTTP client library untuk komunikasi dengan Ollama LLM API.
-
----
-
-### 5. Persiapan Database MySQL
-
-Aplikasi ini menggunakan MySQL sebagai database. Sebelum menjalankan aplikasi, lakukan langkah berikut:
-
-1. Aktifkan service Apache & MySQL Anda (misal menggunakan **XAMPP / Laragon**).
-2. Buka **phpMyAdmin** (`http://localhost/phpmyadmin/`) atau database manager pilihan Anda (HeidiSQL, DBeaver, dll.).
-3. Buat database baru bernama **`db_sobathitung`** (atau sesuaikan dengan konfigurasi variabel `DB_NAME` di file `.env`).
-4. Anda tidak perlu membuat tabel secara manual. Pony ORM melalui fungsi `db.generate_mapping(create_tables=True)` di file `app.py` akan otomatis me-generate tabel berikut:
-   - `tbl_user` — Data pengguna, profil, dan pengaturan
-   - `tbl_activity_log` — Log riwayat aktivitas user
-   - `tbl_chat_history` — Riwayat percakapan AI
-   - `tbl_uploaded_file` — Data file yang diupload
+- **Flask**: The primary Python web framework.
+- **Flask-Mail**: SMTP server scheduler integration for email verification.
+- **pony**: Pony Object Relational Mapper (ORM) for database interaction.
+- **bcrypt**: A trusted hashing algorithm for user password security.
+- **PyMySQL**: Python MySQL client library connected to Pony ORM.
+- **python-dotenv**: A library that simplifies reading `.env` configuration files.
+- **requests**: HTTP client library for communicating with the Ollama LLM API.
 
 ---
 
-### 6. Setup Ollama (AI LLM Server)
+### 5. MySQL Database Setup
 
-Aplikasi SobatHitung menggunakan **Ollama** sebagai backend LLM lokal. Model yang didukung:
+This application uses MySQL as its database. Before running the application, complete the following steps:
 
-- **DeepSeek-R1 32B** — Model reasoning canggih untuk analisis keuangan mendalam
-- **Qwen3 14B** — Model cepat dan efisien untuk respons instan
+1. Start your Apache & MySQL services (e.g., using **XAMPP** or **Laragon**).
+2. Open **phpMyAdmin** (`http://localhost/phpmyadmin/`) or your preferred database manager (HeidiSQL, DBeaver, etc.).
+3. Create a new database named **`db_sobathitung`** (or adjust it to match the `DB_NAME` variable in your `.env` file).
+4. You do not need to create the tables manually. Pony ORM, via the `db.generate_mapping(create_tables=True)` function in `app.py`, will automatically generate the following tables:
+   - `tbl_user` — User data, profiles, and settings
+   - `tbl_activity_log` — User activity history log
+   - `tbl_chat_history` — AI conversation history
+   - `tbl_uploaded_file` — Uploaded file data
 
-**Langkah Setup:**
+---
 
-1. Download dan install Ollama dari [ollama.com](https://ollama.com)
-2. Jalankan Ollama (otomatis berjalan di `http://localhost:11434`)
-3. Buka terminal baru, lalu download model:
+### 6. Ollama Setup (AI LLM Server)
+
+The SobatHitung application uses **Ollama** as a local LLM backend. Supported models include:
+
+- **DeepSeek-R1 32B** — An advanced reasoning model for in-depth financial analysis
+- **Qwen3 14B** — A fast and efficient model for instant responses
+
+**Setup Steps:**
+
+1. Download and install Ollama from [ollama.com](https://ollama.com).
+2. Run Ollama (it automatically runs at `http://localhost:11434`).
+3. Open a new terminal and download the models:
    ```bash
    ollama pull deepseek-r1:32b
    ollama pull qwen3:14b
    ```
-4. Pastikan Ollama tetap berjalan saat menggunakan fitur AI di SobatHitung.
+4. Ensure Ollama remains running while using the AI features in SobatHitung.
 
 > [!TIP]
-> Jika perangkat Anda memiliki RAM terbatas, Anda bisa menggunakan salah satu model saja. Qwen3 14B lebih ringan dan cocok untuk perangkat dengan RAM 16GB.
+> If your device has limited RAM, you can use just one model. Qwen3 14B is lighter and more suitable for devices with 16GB of RAM.
 
 ---
 
-### 7. Cara Menjalankan Proyek SobatHitung
+### 7. Running the SobatHitung Project
 
-Setelah semua setup di atas selesai (Virtual Environment aktif, dependensi terinstal, `.env` terkonfigurasi, database MySQL telah dibuat, dan Ollama berjalan), Anda dapat menjalankan server dengan langkah berikut:
+Once all of the above setup is complete (Virtual Environment activated, dependencies installed, `.env` configured, MySQL database created, and Ollama running), you can start the server with the following command:
 
 ```bash
 python app.py
 ```
 
-Jika server berhasil berjalan, Anda akan melihat output serupa:
+If the server starts successfully, you will see output similar to the following:
 
 ```text
  * Serving Flask app 'app'
@@ -282,8 +282,8 @@ Jika server berhasil berjalan, Anda akan melihat output serupa:
 Press CTRL+C to quit
 ```
 
-Buka peramban (browser) Anda dan akses alamat tersebut:
+Open your web browser and navigate to the address shown:
 
 ```text
-http://127.0.0.1:5100/ atau http://localhost:5100/
+http://127.0.0.1:5100/ or http://localhost:5100/
 ```
